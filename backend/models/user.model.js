@@ -11,7 +11,7 @@ const User = new mongoose.Schema({
                 validator.isEmail(value);
             },
             message : 'Invalid email format'
-        }
+        }//if validation is correct then it will return true otherwise false and give the error message
     },
     password: {
         type: String,
