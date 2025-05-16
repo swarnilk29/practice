@@ -1,24 +1,71 @@
-import mongoose from "mongoose";//mongooose is orm, because puttig data through queries is hard
-import validator from 'validator';// for schema validations
+// import mongoose from "mongoose";//mongooose is orm, because puttig data through queries is hard
+// import validator from 'validator';// for schema validations
 
-const User = new mongoose.Schema({
+// const User = new mongoose.Schema({
+//     email: {
+//         type: String,
+//         required: true,
+//         unique: true,
+//         validate : {
+//             validator : (value) => {
+//                 validator.isEmail(value);
+//             },
+//             message : 'Invalid email format'
+//         }//if validation is correct then it will return true otherwise false and give the error message
+//     },
+//     password: {
+//         type: String,
+//         required: true
+//     },
+//     name: {
+//         type: String,
+//         required: true
+//     }
+// })
+
+
+
+
+import mongoose from 'mongoose';
+// import bcrypt from 'bcrypt';
+
+const userSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: [3, "Name must be at least 3 characters long 😊"],
+        maxlength: [50, "Name should not exceed 50 characters 😊"],
+    },
     email: {
         type: String,
         required: true,
         unique: true,
-        validate : {
-            validator : (value) => {
-                validator.isEmail(value);
-            },
-            message : 'Invalid email format'
-        }//if validation is correct then it will return true otherwise false and give the error message
+        trim: true,
+        match: [/.+@.+\..+/, "Please enter a valid email 😊"],
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        minlength: [6, "Password must be at least 6 characters long 😊"],
     },
-    name: {
+    confirmPassword: {
         type: String,
-        required: true
-    }
-})
+        required: true,
+        validate: {
+            validator: function (value) {
+                return value === this.password; // Ensure confirmPassword matches password
+            },
+            message: "Password and Confirm Password must be the same 😊", // Error message
+        },
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+});
+
+// Hash the password before saving the user
+
+const User = mongoose.model('User', userSchema);
+export default User;
